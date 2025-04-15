@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "WebAppRun",
+    "Projects": [
+      {
+        "Path": "BlazorFrontEnd\\BlazorFrontEnd.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "MinimalApiBackEnd\\MinimalApiBackEnd.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

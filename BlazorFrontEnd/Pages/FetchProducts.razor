@@ -1,0 +1,83 @@
+﻿@page "/fetchproducts"
+@using System.Net.Http
+@using System.Text.Json
+@inject HttpClient Http
+
+<h3>Product List</h3>
+
+<ul>
+    @if (products != null)
+    {
+        foreach (var product in products)
+        {
+            <li>@product.Name - $@product.Price (Stock: @product.Stock)</li>
+        }
+    }
+    else
+    {
+        <li>Loading...</li>
+    }
+</ul>
+
+@code {
+    private Product[]? products;
+    private string? errorMessage;
+
+    // Copilot suggested the use of OnInitializedAsync for asynchronous data fetching,
+    // which aligns with Blazor's lifecycle methods for initializing components.
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Copilot recommended using HttpClient's GetAsync method for making API calls.
+            // This ensures efficient and asynchronous communication with the backend.
+            var response = await Http.GetAsync("/api/productlist");
+            response.EnsureSuccessStatusCode();
+
+            // Copilot suggested using JsonSerializer with PropertyNameCaseInsensitive
+            // to handle JSON deserialization while ignoring case sensitivity in property names.
+            var json = await response.Content.ReadAsStringAsync();
+            products = JsonSerializer.Deserialize<Product[]>(json, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+            // Copilot highlighted the need to handle cases where the product list is empty.
+            if (products == null || products.Length == 0)
+            {
+                errorMessage = "No products found.";
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            // Copilot suggested catching HttpRequestException to handle HTTP-specific errors.
+            errorMessage = $"Error fetching products: {ex.Message}";
+        }
+        catch (JsonException ex)
+        {
+            // Copilot recommended catching JsonException to handle JSON parsing errors.
+            errorMessage = $"Error parsing product data: {ex.Message}";
+        }
+        catch (TaskCanceledException)
+        {
+            // Copilot suggested handling TaskCanceledException for timeout scenarios.
+            errorMessage = "Request timed out. Please try again.";
+        }
+        catch (Exception ex)
+        {
+            // Copilot emphasized the importance of a generic exception handler
+            // to catch any unexpected errors.
+            errorMessage = $"An unexpected error occurred: {ex.Message}";
+        }
+    }
+
+    // Copilot provided a clear and concise structure for the Product class,
+    // ensuring it includes all necessary properties for the application.
+    public class Product
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = default!;
+        public double Price { get; set; }
+        public int Stock { get; set; }
+    }
+}

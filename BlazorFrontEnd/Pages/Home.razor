@@ -1,0 +1,23 @@
+﻿@page "/"  
+
+<PageTitle>Home</PageTitle>  
+
+<h1>Hello, Peers!</h1>  
+
+Welcome to your new app.  
+
+<p>To help you get started, we have created a sample page that fetches a list of products from the server.</p>  
+
+<p>Click the button below to view the product list.</p>  
+
+<button class="btn btn-primary" @onclick="NavigateToFetchProducts">Fetch Products</button>  
+
+@code {  
+  private void NavigateToFetchProducts()  
+  {  
+      NavigationManager.NavigateTo("/fetchproducts");  
+  }  
+
+  [Inject]  
+  private NavigationManager NavigationManager { get; set; }  
+}
